@@ -98,12 +98,23 @@ namespace jest
       return { sizeof...(Ns), failed };
     }
 
+    template <typename T>
+    void render_component(std::stringstream &ss, T const &t)
+    { ss << t << ", "; }
+    template <>
+    void render_component<std::string>(std::stringstream &ss,
+                                       std::string const &s)
+    { ss << "\"" << s << "\", "; }
+    template <size_t N>
+    void render_component(std::stringstream &ss, char const (&s)[N])
+    { ss << "\"" << s << "\", "; }
+
     template <typename... Args>
     void fail(std::string const &msg, Args const &... args)
     {
       std::stringstream ss;
       ss << std::boolalpha;
-      int const _[]{ (ss << args << ", ", 0)... }; /* TODO: quotes around strings */
+      int const _[]{ (render_component(ss, args), 0)... };
       (void)_;
       throw std::runtime_error{ "failed '" + msg + "' (" + ss.str().substr(0, ss.str().size() - 2) + ")" };
     }
@@ -193,6 +204,11 @@ namespace jest
     float const f{ 3.14 };
     float const f2{ f * 2.0f };
     expect_equal(i, f, f2);
+  }
+  template <>
+  void test<ex_1_group, 28>()
+  {
+    expect_equal("jeaye", "Jeaye");
   }
 }
 
