@@ -1,8 +1,8 @@
-#include "include/jest/jest.hpp"
+#include "jest/jest.hpp"
 
 struct ex_1{ };
 using ex_1_group = jest::group<ex_1>;
-ex_1_group ex_1_g{ "example" };
+ex_1_group const ex_1_obj{ "example" };
 
 namespace jest
 {
