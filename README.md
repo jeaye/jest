@@ -1,9 +1,11 @@
 jest (C++11 unit test framework)
 ---
 
-jest is a very sane and minimal C++ unit test framework that uses a templated approach to registering tests. Absolutely no macros are used or needed for test writing, and the whole API can be described in the following example:
+jest is a sane and minimal (header only) C++ unit test framework that uses a templated approach to registering tests. Absolutely no macros are used or needed for test writing, and the whole API can be described in the following example:
 
 ```cpp
+#include <jest/jest.hpp>
+
 /* Step 1: Define a group type and object. */
 struct ex_1{ };
 using ex_1_group = jest::group<ex_1>;
@@ -29,19 +31,13 @@ namespace jest
   }
   template <>
   void test<ex_1_group, 2>()
-  {
-    fail("woops");
-  }
+  { fail("woops"); }
   template <>
   void test<ex_1_group, 3>()
-  {
-    fail();
-  }
+  { fail(); }
   template <>
   void test<ex_1_group, 28>() /* Test numbers do not need to be sequential. */
-  {
-    expect_equal("string", "String");
-  }
+  { expect_equal("string", "String"); }
   template <>
   void test<ex_1_group, 4>()
   { }
@@ -49,9 +45,7 @@ namespace jest
 
 /* Step 3: Create a worker, which will run the tests. */
 int main()
-{
-  jest::worker const j;
-}
+{ jest::worker const j; }
 ```
 Possible output:
 ```
@@ -66,3 +60,6 @@ finished group 'example'
 
 5/6 test(s) failed
 ```
+
+### Installation
+Since jest is a header-only library, simply copy over the contents of `include` to your project, or, better yet, add jest as a submodule and introduce `jest/include` to your header search paths.

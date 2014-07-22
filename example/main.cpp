@@ -23,22 +23,14 @@ namespace jest
   }
   template <>
   void test<ex_1_group, 2>()
-  {
-    fail("woops");
-  }
+  { fail("woops"); }
   template <>
   void test<ex_1_group, 3>()
-  {
-    fail();
-  }
+  { fail(); }
   template <>
   void test<ex_1_group, 28>()
-  {
-    expect_equal("jeaye", "Jeaye");
-  }
+  { expect_equal("jeaye", "Jeaye"); }
 }
 
 int main()
-{
-  jest::worker const j;
-}
+{ jest::worker const j; }
