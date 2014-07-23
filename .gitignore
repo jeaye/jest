@@ -3,3 +3,6 @@ Makefile
 
 # Output directories
 bin/
+
+# Vim
+.ycm_extra_conf.pyc
