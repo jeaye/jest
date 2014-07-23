@@ -10,7 +10,9 @@ namespace jest
 {
   struct worker
   {
-    worker()
+    worker() = default;
+
+    bool operator ()() const
     {
       auto &registrar(detail::registrar::get());
       size_t total{}, failed{};
@@ -24,6 +26,8 @@ namespace jest
       { std::cout << failed << "/" << total << " test(s) failed" << std::endl; }
       else
       { std::cout << "all " << total << "tests passed" << std::endl; }
+
+      return failed;
     }
   };
 }

@@ -1,4 +1,4 @@
-#include "jest/jest.hpp"
+#include <jest/jest.hpp>
 
 struct ex_1{ };
 using ex_1_group = jest::group<ex_1>;
@@ -29,8 +29,11 @@ namespace jest
   { fail(); }
   template <>
   void test<ex_1_group, 28>()
-  { expect_equal("jeaye", "Jeaye"); }
+  { expect_equal("string", "String"); }
 }
 
 int main()
-{ jest::worker const j; }
+{
+  jest::worker const j;
+  return j();
+}
