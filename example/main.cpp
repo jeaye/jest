@@ -28,6 +28,9 @@ namespace jest
   void test<ex_1_group, 3>()
   { fail(); }
   template <>
+  void test<ex_1_group, 4>()
+  { expect_equal(0, 0.0f, 0x00, 0000, 0b000); }
+  template <>
   void test<ex_1_group, 28>()
   { expect_equal("string", "String"); }
 }
