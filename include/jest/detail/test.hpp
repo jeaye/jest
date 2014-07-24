@@ -5,7 +5,8 @@
 #include <cstdint>
 #include <utility>
 #include <iostream>
-#include <experimental/optional>
+
+#include "optional.hpp"
 
 namespace jest
 {
@@ -20,7 +21,7 @@ namespace jest
   namespace detail
   {
     using failure = std::string;
-    using optional_failure = std::experimental::optional<std::experimental::optional<failure>>;
+    using optional_failure = optional<optional<failure>>;
 
     struct tally_results
     { size_t const total, failed; };
