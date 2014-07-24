@@ -46,7 +46,7 @@ namespace jest
 /* Step 3: Create a worker, which will run the tests. */
 int main()
 {
-  jest::worker const j;
+  jest::worker const j{};
   return j();
 }
 ```
