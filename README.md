@@ -66,7 +66,7 @@ finished group 'example'
 ```
 
 ### What the hell is `template <> template <>`?
-You're specializing a member function of a class template parameterized on your test type. We make it a member function so that the group can inherit from it. This allows you access to group-specific data during all of your tests.
+You're specializing a member function of `jest::group`, which is templated on your test type. It also inherits from your test type, giving direct access to your test type's member variables from within `jest::group::test`.
 
 An example of where I use this group-specific data is for testing the output of certain functions to stdout. Add a `std::stringstream` to the test data, redirect `std::cout` to it, and now you can check its contents for each test. Example:
 ```cpp
@@ -74,12 +74,13 @@ An example of where I use this group-specific data is for testing the output of 
 
 #include <algorithm>
 
+/* My test type is output, which has a stringstream. */
 struct output
 {
   output()
   { std::cout.rdbuf(out.rdbuf()); }
 
-  std::stringstream out;
+  std::stringstream out; /* This will be accessible in each test. */
 };
 using output_group = jest::group<output>;
 output_group const output_obj{ "output" };
@@ -102,6 +103,7 @@ namespace jest
   template <> template <>
   void output_group::test<0>()
   {
+    /* Here, I can access `out`, a member variable of my test type. */
     detail::speak();
     expect_equal(out.str(), "BARK");
     out.str("");
