@@ -38,16 +38,15 @@ namespace jest
   {
     expect_exception<std::runtime_error>([]
     { throw std::runtime_error{""}; });
-  }
-  template <> template <>
-  void ex_1_group::test<30>()
-  {
     expect_exception<std::runtime_error>([]
     { throw std::logic_error{""}; });
   }
   template <> template <>
-  void ex_1_group::test<31>()
+  void ex_1_group::test<30>()
   { expect_exception<std::runtime_error>([]{ }); }
+  template <> template <>
+  void ex_1_group::test<31>()
+  { expect_exception<std::runtime_error, float>([]{ throw 2.0f; }); }
 }
 
 int main()

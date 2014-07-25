@@ -44,7 +44,7 @@ namespace jest
   template <> template <>
   void ex_1_group::test<29>()
   {
-    expect_exception<std::runtime_error>([]
+    expect_exception<std::runtime_error>([] /* Variadic; any number of exception types. */
     { throw std::runtime_error{""}; });
   }
 }

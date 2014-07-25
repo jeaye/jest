@@ -50,21 +50,39 @@ namespace jest
       if(n != sizeof...(Args))
       { expect_equal_impl(n + 1, args..., t); }
     }
+
+    template <typename... Ts>
+    struct filter_exception;
+    template <>
+    struct filter_exception<>
+    {
+      void operator ()() const
+      { throw std::runtime_error{ "unexpected exception" }; }
+    };
+    template <typename T, typename... Ts>
+    struct filter_exception<T, Ts...>
+    {
+      void operator ()() const
+      try
+      { throw; }
+      catch(T const &)
+      { }
+      catch(...)
+      { filter_exception<Ts...>{}(); }
+    };
   }
 
-  template <typename T>
+  template <typename... Ts>
   void expect_exception(std::function<void ()> const &f)
   try
   {
     f();
     throw detail::no_exception{};
   }
-  catch(T const &)
-  { }
   catch(detail::no_exception const &)
   { throw std::runtime_error{ "expected exception, none was thrown" }; }
   catch(...)
-  { throw std::runtime_error{ "unexpected exception" }; }
+  { detail::filter_exception<Ts...>{}(); }
 
   template <typename... Args>
   void expect_equal(Args const &... args)
