@@ -69,7 +69,6 @@ running group 'example'
 finished group 'example'
 
 5/7 test(s) failed
-
 ```
 
 ### What the hell is `template <> template <>`?
