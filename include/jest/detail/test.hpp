@@ -27,16 +27,16 @@ namespace jest
     { size_t const total, failed; };
 
     void log_failure(size_t const n, std::string const &msg)
-    { std::cout << "  test " << n << " failure: " << msg << std::endl; }
+    { std::cerr << "  test " << n << " failure: " << msg << std::endl; }
     void log_success(size_t const n)
-    { std::cout << "  test " << n << " success" << std::endl; }
+    { std::cerr << "  test " << n << " success" << std::endl; }
 
     template <typename Group, size_t TN>
-    optional_failure test_impl()
+    optional_failure test_impl(Group &g)
     {
       try
       {
-        test<Group, TN>();
+        g.test<TN>();
         return {{}};
       }
       catch(std::exception const &e)
@@ -48,10 +48,11 @@ namespace jest
     }
 
     template <typename Group, size_t... Ns>
-    tally_results run_impl(std::string const &name, std::integer_sequence<size_t, Ns...>)
+    tally_results run_impl(Group &g, std::string const &name,
+                           std::integer_sequence<size_t, Ns...>)
     {
-      std::cout << "running group '" + name << "'" << std::endl;
-      optional_failure const results[]{ test_impl<Group, Ns>()... };
+      std::cerr << "running group '" + name << "'" << std::endl;
+      optional_failure const results[]{ test_impl<Group, Ns>(g)... };
       size_t total{}, failed{};
       for(size_t i{}; i < sizeof...(Ns); ++i)
       {
@@ -67,7 +68,7 @@ namespace jest
           { log_success(i); }
         }
       }
-      std::cout << "finished group '" + name << "'\n" << std::endl;
+      std::cerr << "finished group '" + name << "'\n" << std::endl;
       return { total, failed };
     }
   }

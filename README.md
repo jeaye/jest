@@ -14,33 +14,33 @@ ex_1_group const ex_1_obj{ "example" };
 /* Step 2: Specialize for your group and all tests you'd like. */
 namespace jest
 {
-  template <>
-  void test<ex_1_group, 0>() /* Tests are numbered; the order does not matter. */
+  template <> template <>
+  void ex_1_group::test<0>() /* Tests are numbered; the order does not matter. */
   {
     int const i{};
     float const f{ 3.14 };
     expect(i == f);
   }
-  template <>
-  void test<ex_1_group, 1>()
+  template <> template <> /* Double template bit here is required. */
+  void ex_1_group::test<1>()
   {
     int const i{};
     float const f{ 3.14 };
     float const f2{ f * 2.0f };
     expect_equal(i, f, f2); /* Variadic; compares all permutations of pairs. */
   }
-  template <>
-  void test<ex_1_group, 2>()
+  template <> template <>
+  void ex_1_group::test<2>()
   { fail("woops"); }
-  template <>
-  void test<ex_1_group, 3>()
+  template <> template <>
+  void ex_1_group::test<3>()
   { fail(); }
-  template <>
-  void test<ex_1_group, 28>() /* Test numbers do not need to be sequential. */
+  template <> template <>
+  void ex_1_group::test<4>()
+  { expect_equal(0, 0.0f, 0x00, 0000, 0b000); }
+  template <> template <>
+  void ex_1_group::test<28>() /* Test numbers do not need to be sequential. */
   { expect_equal("string", "String"); }
-  template <>
-  void test<ex_1_group, 4>()
-  { }
 }
 
 /* Step 3: Create a worker, which will run the tests. */
@@ -53,15 +53,82 @@ int main()
 Possible output:
 ```
 running group 'example'
-  test 0 failure: 'unexpected' (false) 
-  test 1 failure: 'not equal' (0, 3.14) 
-  test 2 failure: 'explicit fail' ("woops") 
-  test 3 failure: 'explicit fail' ("") 
+  test 0 failure: failed 'unexpected' (false)
+  test 1 failure: failed 'not equal' (0, 3.14)
+  test 2 failure: failed 'explicit fail' ("woops")
+  test 3 failure: failed 'explicit fail' ("")
   test 4 success
-  test 28 failure: 'not equal' ("string", "String") 
+  test 28 failure: failed 'not equal' ("string", "String")
 finished group 'example'
 
 5/6 test(s) failed
+
+```
+
+### What the hell is template <> template <>?
+You're specializing a member function of a class template parameterized on your test type. We make it a member function so that the group can inherit from it. This allows you access to group-specific data during all of your tests.
+
+An example of where I use this group-specific data is for testing the output of certain functions to stdout. Add a `std::stringstream` to the test data, redirect `std::cout` to it, and now you can check its contents for each test. Example:
+```cpp
+#include <jest/jest.hpp>
+
+#include <algorithm>
+
+struct output
+{
+  output()
+  { std::cout.rdbuf(out.rdbuf()); }
+
+  std::stringstream out;
+};
+using output_group = jest::group<output>;
+output_group const output_obj{ "output" };
+
+namespace jest
+{
+  namespace detail
+  {
+    void speak()
+    { std::cout << "BARK"; }
+    void yell(std::string s)
+    {
+      std::transform(std::begin(s), std::end(s), std::begin(s),
+      [](char const c)
+      { return std::toupper(c); });
+      std::cout << s;
+    }
+  }
+
+  template <> template <>
+  void output_group::test<0>()
+  {
+    detail::speak();
+    expect_equal(out.str(), "BARK");
+    out.str("");
+  }
+  template <> template <>
+  void output_group::test<1>()
+  {
+    detail::yell("testing is the best");
+    expect_equal(out.str(), "TESTING IS THE BEST");
+    out.str("");
+  }
+}
+
+int main()
+{
+  jest::worker const j{};
+  return j();
+}
+```
+Possible output:
+```
+running group 'output'
+  test 0 success
+  test 1 success
+finished group 'output'
+
+all 2 tests passed
 ```
 
 ### Installation

@@ -6,32 +6,32 @@ ex_1_group const ex_1_obj{ "example" };
 
 namespace jest
 {
-  template <>
-  void test<ex_1_group, 0>()
+  template <> template <>
+  void ex_1_group::test<0>()
   {
     int const i{};
     float const f{ 3.14 };
     expect(i == f);
   }
-  template <>
-  void test<ex_1_group, 1>()
+  template <> template <>
+  void ex_1_group::test<1>()
   {
     int const i{};
     float const f{ 3.14 };
     float const f2{ f * 2.0f };
     expect_equal(i, f, f2);
   }
-  template <>
-  void test<ex_1_group, 2>()
+  template <> template <>
+  void ex_1_group::test<2>()
   { fail("woops"); }
-  template <>
-  void test<ex_1_group, 3>()
+  template <> template <>
+  void ex_1_group::test<3>()
   { fail(); }
-  template <>
-  void test<ex_1_group, 4>()
+  template <> template <>
+  void ex_1_group::test<4>()
   { expect_equal(0, 0.0f, 0x00, 0000, 0b000); }
-  template <>
-  void test<ex_1_group, 28>()
+  template <> template <>
+  void ex_1_group::test<28>()
   { expect_equal("string", "String"); }
 }
 

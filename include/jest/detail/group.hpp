@@ -14,13 +14,13 @@ namespace jest
     struct group_concept
     {
       virtual ~group_concept() = default;
-      virtual tally_results run() const = 0;
+      virtual tally_results run() = 0;
     };
 
     class registrar
     {
       public:
-        using vec_t = std::vector<std::reference_wrapper<group_concept const>>;
+        using vec_t = std::vector<std::reference_wrapper<group_concept>>;
         using const_iterator = vec_t::const_iterator;
 
         static registrar& get()
@@ -34,9 +34,9 @@ namespace jest
         const_iterator end() const
         { return groups_.end(); }
 
-        void add(group_concept const &g)
-        { groups_.emplace_back(std::cref(g)); }
-        
+        void add(group_concept &g)
+        { groups_.emplace_back(std::ref(g)); }
+
       private:
         vec_t groups_;
     };
@@ -47,12 +47,16 @@ namespace jest
   {
     public:
       group() = delete;
-      group(std::string name)
+      group(std::string &&name)
         : name_{ std::move(name) }
       { detail::registrar::get().add(*this); }
 
-      detail::tally_results run() const override
-      { return detail::run_impl<group>(name_, std::make_index_sequence<N>()); }
+      detail::tally_results run() override
+      { return detail::run_impl(*this, name_, std::make_index_sequence<N>()); }
+
+      template <size_t TN>
+      void test()
+      { throw detail::default_test{}; }
 
     private:
       std::string name_;

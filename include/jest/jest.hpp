@@ -16,16 +16,16 @@ namespace jest
     {
       auto &registrar(detail::registrar::get());
       size_t total{}, failed{};
-      for(auto const &group : registrar)
+      for(auto &group : registrar)
       {
         auto const tally(group.get().run());
         total += tally.total;
         failed += tally.failed;
       }
       if(failed)
-      { std::cout << failed << "/" << total << " test(s) failed" << std::endl; }
+      { std::cerr << failed << "/" << total << " test(s) failed" << std::endl; }
       else
-      { std::cout << "all " << total << "tests passed" << std::endl; }
+      { std::cerr << "all " << total << " tests passed" << std::endl; }
 
       return failed;
     }
