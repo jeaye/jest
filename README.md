@@ -65,7 +65,7 @@ finished group 'example'
 
 ```
 
-### What the hell is template <> template <>?
+### What the hell is `template <> template <>`?
 You're specializing a member function of a class template parameterized on your test type. We make it a member function so that the group can inherit from it. This allows you access to group-specific data during all of your tests.
 
 An example of where I use this group-specific data is for testing the output of certain functions to stdout. Add a `std::stringstream` to the test data, redirect `std::cout` to it, and now you can check its contents for each test. Example:
