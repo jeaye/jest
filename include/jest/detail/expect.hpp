@@ -9,6 +9,9 @@ namespace jest
 {
   namespace detail
   {
+    struct no_exception
+    { };
+
     /* TODO: suffix for types? 'f' for float, 'i' for int */
     template <typename T>
     void render_component(std::stringstream &ss, T const &t)
@@ -48,6 +51,20 @@ namespace jest
       { expect_equal_impl(n + 1, args..., t); }
     }
   }
+
+  template <typename T>
+  void expect_exception(std::function<void ()> const &f)
+  try
+  {
+    f();
+    throw detail::no_exception{};
+  }
+  catch(T const &)
+  { }
+  catch(detail::no_exception const &)
+  { throw std::runtime_error{ "expected exception, none was thrown" }; }
+  catch(...)
+  { throw std::runtime_error{ "unexpected exception" }; }
 
   template <typename... Args>
   void expect_equal(Args const &... args)

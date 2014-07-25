@@ -33,6 +33,21 @@ namespace jest
   template <> template <>
   void ex_1_group::test<28>()
   { expect_equal("string", "String"); }
+  template <> template <>
+  void ex_1_group::test<29>()
+  {
+    expect_exception<std::runtime_error>([]
+    { throw std::runtime_error{""}; });
+  }
+  template <> template <>
+  void ex_1_group::test<30>()
+  {
+    expect_exception<std::runtime_error>([]
+    { throw std::logic_error{""}; });
+  }
+  template <> template <>
+  void ex_1_group::test<31>()
+  { expect_exception<std::runtime_error>([]{ }); }
 }
 
 int main()

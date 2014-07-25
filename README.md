@@ -41,6 +41,12 @@ namespace jest
   template <> template <>
   void ex_1_group::test<28>() /* Test numbers do not need to be sequential. */
   { expect_equal("string", "String"); }
+  template <> template <>
+  void ex_1_group::test<29>()
+  {
+    expect_exception<std::runtime_error>([]
+    { throw std::runtime_error{""}; });
+  }
 }
 
 /* Step 3: Create a worker, which will run the tests. */
@@ -59,9 +65,10 @@ running group 'example'
   test 3 failure: failed 'explicit fail' ("")
   test 4 success
   test 28 failure: failed 'not equal' ("string", "String")
+  test 29 success
 finished group 'example'
 
-5/6 test(s) failed
+5/7 test(s) failed
 
 ```
 
