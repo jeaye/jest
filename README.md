@@ -65,4 +65,6 @@ finished group 'example'
 ```
 
 ### Installation
-Since jest is a header-only library, simply copy over the contents of `include` to your project, or, better yet, add jest as a submodule and introduce `jest/include` to your header search paths.
+Since jest is a header-only library, simply copy over the contents of `include` to your project, or, better yet, add jest as a submodule and introduce `jest/include` to your header search paths.  
+
+Full installation can also be achieved by using `./configure && make install`. See the `configure` script for prefix options.  
