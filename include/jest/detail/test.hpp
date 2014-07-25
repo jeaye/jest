@@ -36,7 +36,7 @@ namespace jest
     {
       try
       {
-        g.test<TN>();
+        g.template test<TN>();
         return {{}};
       }
       catch(std::exception const &e)
