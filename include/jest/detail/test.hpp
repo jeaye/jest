@@ -11,17 +11,13 @@
 namespace jest
 {
   namespace detail
-  { struct default_test {}; }
-
-  /* TODO: Access to test data? */
-  template <typename T, size_t N>
-  void test()
-  { throw detail::default_test{}; }
-
-  namespace detail
   {
-    using failure = std::string;
-    using optional_failure = optional<optional<failure>>;
+    using optional_failure = optional<optional<bool>>;
+
+    struct default_test
+    { };
+    struct failed_test : std::runtime_error
+    { using std::runtime_error::runtime_error; };
 
     struct tally_results
     { size_t const total, failed; };
@@ -33,18 +29,25 @@ namespace jest
 
     template <typename Group, size_t TN>
     optional_failure test_impl(Group &g)
+    try
     {
       try
       {
         g.template test<TN>();
-        return {{}};
+        log_success(TN);
+        return {{ true }};
       }
       catch(std::exception const &e)
-      { return {{ e.what() }}; }
+      { throw failed_test{ e.what() }; }
       catch(default_test)
       { return {}; }
       catch(...)
-      { return {{ "unknown exception thrown" }}; }
+      { throw failed_test{ "unknown exception thrown" }; }
+    }
+    catch(failed_test const &e)
+    {
+      log_failure(TN, e.what());
+      return {{ false }};
     }
 
     template <typename Group, size_t... Ns>
@@ -59,13 +62,8 @@ namespace jest
         if(results[i])
         {
           ++total;
-          if(results[i].value())
-          {
-            log_failure(i, results[i].value().value());
-            ++failed;
-          }
-          else
-          { log_success(i); }
+          if(!results[i].value().value())
+          { ++failed; }
         }
       }
       std::cerr << "finished group '" + name << "'\n" << std::endl;
