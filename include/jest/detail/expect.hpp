@@ -34,21 +34,15 @@ namespace jest
       throw std::runtime_error{ "failed '" + msg + "' (" + ss.str().substr(0, ss.str().size() - 2) + ")" };
     }
 
-    template <typename T1, typename T2>
-    void compare(T1 const &t1, T2 const &t2)
-    {
-      if(t1 != t2)
-      { fail("not equal", t1, t2); }
-    }
-    template <typename T, typename... Args>
-    void expect_equal_impl(size_t const n,
+    template <typename C, typename T, typename... Args>
+    void expect_equal_impl(C const &comp, size_t const n,
                            T const &t, Args const &... args)
     {
       int const _[]
-      { (compare(t, args), 0)... };
+      { (comp(t, args), 0)... };
       (void)_;
       if(n != sizeof...(Args))
-      { expect_equal_impl(n + 1, args..., t); }
+      { expect_equal_impl(comp, n + 1, args..., t); }
     }
 
     template <typename... Ts>
@@ -86,7 +80,24 @@ namespace jest
 
   template <typename... Args>
   void expect_equal(Args const &... args)
-  { detail::expect_equal_impl(0, args...); }
+  {
+    detail::expect_equal_impl([](auto const &t1, auto const &t2)
+    {
+      if(t1 != t2)
+      { detail::fail("not equal", t1, t2); }
+    },
+    0, args...);
+  }
+  template <typename... Args>
+  void expect_not_equal(Args const &... args)
+  {
+    detail::expect_equal_impl([](auto const &t1, auto const &t2)
+    {
+      if(t1 == t2)
+      { detail::fail("equal", t1, t2); }
+    },
+    0, args...);
+  }
   template <typename... Args>
   void expect(bool const b)
   {

@@ -66,7 +66,7 @@ namespace jest
           { ++failed; }
         }
       }
-      std::cerr << "finished group '" + name << "'\n" << std::endl;
+      std::cerr << "finished group '" + name << "'" << std::endl;
       return { total, failed };
     }
   }
