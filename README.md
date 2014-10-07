@@ -49,7 +49,7 @@ namespace jest
   }
 }
 
-/* Step 3: Create a worker, which will run the tests. */
+/* Step 3: Create a worker which will run the tests. */
 int main()
 {
   jest::worker const j{};
@@ -78,6 +78,7 @@ An example of where I use this group-specific data is for testing the output of 
 ```cpp
 #include <jest/jest.hpp>
 
+#include <iterator>
 #include <algorithm>
 
 /* My test type is output, which has a stringstream. */
@@ -97,12 +98,12 @@ namespace jest
   {
     void speak()
     { std::cout << "BARK"; }
-    void yell(std::string s)
+    void yell(std::string const &s)
     {
-      std::transform(std::begin(s), std::end(s), std::begin(s),
+      std::transform(std::begin(s), std::end(s),
+                     std::ostream_iterator<char>(std::cout),
       [](char const c)
       { return std::toupper(c); });
-      std::cout << s;
     }
   }
 

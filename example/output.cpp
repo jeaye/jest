@@ -1,5 +1,6 @@
 #include <jest/jest.hpp>
 
+#include <iterator>
 #include <algorithm>
 
 struct output
@@ -18,12 +19,12 @@ namespace jest
   {
     void speak()
     { std::cout << "BARK"; }
-    void yell(std::string s)
+    void yell(std::string const &s)
     {
-      std::transform(std::begin(s), std::end(s), std::begin(s),
+      std::transform(std::begin(s), std::end(s),
+                     std::ostream_iterator<char>(std::cout),
       [](char const c)
       { return std::toupper(c); });
-      std::cout << s;
     }
   }
 
