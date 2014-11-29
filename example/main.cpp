@@ -31,6 +31,9 @@ namespace jest
   void ex_1_group::test<4>()
   { expect_equal(0, 0.0f, 0x00, 0000, 0b000); }
   template <> template <>
+  void ex_1_group::test<5>()
+  { expect_almost_equal(3.1400000f, 3.1400009f); }
+  template <> template <>
   void ex_1_group::test<28>()
   { expect_equal("string", "String"); }
   template <> template <>

@@ -4,6 +4,9 @@
 #include <string>
 #include <iostream>
 #include <stdexcept>
+#include <limits>
+#include <cmath>
+#include <algorithm>
 
 namespace jest
 {
@@ -31,7 +34,11 @@ namespace jest
       ss << std::boolalpha;
       int const _[]{ (render_component(ss, args), 0)... };
       (void)_;
-      throw std::runtime_error{ "failed '" + msg + "' (" + ss.str().substr(0, ss.str().size() - 2) + ")" };
+      throw std::runtime_error
+      {
+        "failed '" + msg + "' (" +
+        ss.str().substr(0, ss.str().size() - 2) + ")"
+      };
     }
 
     template <typename C, typename T, typename... Args>
@@ -88,6 +95,7 @@ namespace jest
     },
     0, args...);
   }
+
   template <typename... Args>
   void expect_not_equal(Args const &... args)
   {
@@ -98,14 +106,34 @@ namespace jest
     },
     0, args...);
   }
+
+  template <typename... Args>
+  void expect_almost_equal(Args const &... args)
+  {
+    detail::expect_equal_impl([](auto const &t1, auto const &t2)
+    {
+      using common = std::common_type_t<decltype(t1), decltype(t2)>;
+      common const max
+      {
+        std::max({ common{ 1.0 }, std::fabs(common{ t1 }),
+                   std::fabs(common{ t2 }) })
+      };
+      if(std::fabs(common{ t1 - t2 }) >
+         std::numeric_limits<common>::epsilon() * max)
+      { detail::fail("not almost equal", t1, t2); }
+    },
+    0, args...);
+  }
+
   template <typename... Args>
   void expect(bool const b)
   {
     if(!b)
     { detail::fail("unexpected", b); }
   }
-  void fail(std::string const &msg)
+
+  inline void fail(std::string const &msg)
   { detail::fail("explicit fail", msg); }
-  void fail()
+  inline void fail()
   { fail(""); }
 }
