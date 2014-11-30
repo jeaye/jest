@@ -32,7 +32,7 @@ namespace jest
   { expect_equal(0, 0.0f, 0x00, 0000, 0b000); }
   template <> template <>
   void ex_1_group::test<5>()
-  { expect_almost_equal(3.1400000f, 3.1400009f); }
+  { expect_almost_equal(3.140000f, 3.140001f); }
   template <> template <>
   void ex_1_group::test<28>()
   { expect_equal("string", "String"); }
