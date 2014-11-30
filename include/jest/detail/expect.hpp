@@ -112,14 +112,13 @@ namespace jest
   {
     detail::expect_equal_impl([](auto const &t1, auto const &t2)
     {
-      using common = std::common_type_t<decltype(t1), decltype(t2)>;
+      using common = std::decay_t<std::common_type_t<decltype(t1), decltype(t2)>>;
       common const max
       {
         std::max({ common{ 1.0 }, std::fabs(common{ t1 }),
                    std::fabs(common{ t2 }) })
       };
-      if(std::fabs(common{ t1 - t2 }) >
-         std::numeric_limits<common>::epsilon() * max)
+      if(std::fabs(common{ t1 - t2 }) > 0.0000001 * max)
       { detail::fail("not almost equal", t1, t2); }
     },
     0, args...);
