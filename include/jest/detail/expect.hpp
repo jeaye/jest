@@ -26,6 +26,10 @@ namespace jest
     template <size_t N>
     void render_component(std::stringstream &ss, char const (&s)[N])
     { ss << "\"" << s << "\", "; }
+    template <>
+    void render_component<std::nullptr_t>(std::stringstream &ss,
+                                          std::nullptr_t const&)
+    { ss << "nullptr, "; }
 
     template <typename... Args>
     void fail(std::string const &msg, Args const &... args)
