@@ -1,7 +1,7 @@
 jest (C++14 unit test framework)
 ---
 
-jest is a sane and minimal (header only) C++ unit test framework that uses a templated approach to registering tests. Absolutely no macros are used or needed for test writing, and the whole API can be described in the following example:
+jest is a sane and minimal (header only) C++ unit test framework that uses a template-based approach to registering tests. Absolutely no macros are used or needed for test writing and the whole API can be described in the following example:
 
 ```cpp
 #include <jest/jest.hpp>
@@ -75,7 +75,7 @@ finished group 'example'
 ```
 
 ### What the hell is `template <> template <>`?
-You're specializing a member function of `jest::group`, which is templated on your test type. It also inherits from your test type, giving direct access to your test type's member variables from within `jest::group::test`.
+You're specializing a member function of `jest::group`, which is parameterized on your test type. It also inherits from your test type, giving direct access to your test type's member variables from within `jest::group::test`.
 
 An example of where I use this group-specific data is for testing the output of certain functions to stdout. Add a `std::stringstream` to the test data, redirect `std::cout` to it, and now you can check its contents for each test. Example:
 ```cpp
