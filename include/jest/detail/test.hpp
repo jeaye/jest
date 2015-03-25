@@ -22,9 +22,9 @@ namespace jest
     struct tally_results
     { size_t const total, failed; };
 
-    void log_failure(size_t const n, std::string const &msg)
+    inline void log_failure(size_t const n, std::string const &msg)
     { std::cerr << "  test " << n << " failure: " << msg << std::endl; }
-    void log_success(size_t const n)
+    inline void log_success(size_t const n)
     { std::cerr << "  test " << n << " success" << std::endl; }
 
     template <typename Group, size_t TN>

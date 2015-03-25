@@ -7,6 +7,7 @@
 #include <limits>
 #include <cmath>
 #include <algorithm>
+#include <functional>
 
 namespace jest
 {
@@ -20,15 +21,15 @@ namespace jest
     void render_component(std::stringstream &ss, T const &t)
     { ss << t << ", "; }
     template <>
-    void render_component<std::string>(std::stringstream &ss,
-                                       std::string const &s)
+    inline void render_component<std::string>(std::stringstream &ss,
+                                              std::string const &s)
     { ss << "\"" << s << "\", "; }
     template <size_t N>
     void render_component(std::stringstream &ss, char const (&s)[N])
     { ss << "\"" << s << "\", "; }
     template <>
-    void render_component<std::nullptr_t>(std::stringstream &ss,
-                                          std::nullptr_t const&)
+    inline void render_component<std::nullptr_t>(std::stringstream &ss,
+                                                 std::nullptr_t const&)
     { ss << "nullptr, "; }
 
     template <typename... Args>
@@ -37,7 +38,7 @@ namespace jest
       std::stringstream ss;
       ss << std::boolalpha;
       int const _[]{ (render_component(ss, args), 0)... };
-      (void)_;
+      static_cast<void>(_);
       throw std::runtime_error
       {
         "failed '" + msg + "' (" +
