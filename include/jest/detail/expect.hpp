@@ -63,7 +63,10 @@ namespace jest
     struct filter_exception<>
     {
       void operator ()() const
-      { throw std::runtime_error{ "unexpected exception" }; }
+      try
+      { std::rethrow_exception(std::current_exception()); }
+      catch(std::exception const &e)
+      { throw std::runtime_error{ std::string{"unexpected exception: "} + e.what() }; }
     };
     template <typename T, typename... Ts>
     struct filter_exception<T, Ts...>
